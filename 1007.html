@@ -1,0 +1,81 @@
+<!-- Manejo de eventos en JavaScript, incluyendo el registro de eventos y la propagación.  -->
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <main>
+      <div>
+        <p id="count">0</p>
+        <button id="sum">Sumar</button>
+        <button id="res">Restar</button>
+        <button id="mult">Multiplicar</button>
+      </div>
+      <p>evitar que se recargue la pagina al darle click a enviar con</p>
+      <code>e.preventDefault()</code>
+      <form id="form">
+        <input name="texto" type="text" placeholder="Escriba algo.." />
+        <button>Enviar</button>
+      </form>
+      <section>
+        <ul style="background-color: bisque; padding: 30px" id="lista">
+          <li>Elemento 1</li>
+          <li>Elemento 2</li>
+          <li>Elemento 3</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
+
+<script>
+  const count = document.getElementById('count')
+  const form = document.getElementById('form')
+  let val = 0
+  document.getElementById('sum').addEventListener('click', () => {
+    const newVal = val++
+    count.innerHTML = newVal
+  })
+  document.getElementById('res').addEventListener('click', () => {
+    const newVal = val--
+    count.innerHTML = newVal
+  })
+  document.getElementById('mult').addEventListener('dblclick', () => {
+    const newVal = (val *= 2)
+    count.innerHTML = newVal
+  })
+  function handleSubmit(e) {
+    // hacemos el preventDefault para evitar que se recargue la pagina
+    e.preventDefault()
+    // extraemos el texto y hacemos trim para que no se puedan poner espacios vacíos
+    const texto = e.target[0].value.trim()
+    // si el texto resultante es un string vació es considerado como un false entonces retornamos para que no continue el script
+    if (!texto) return
+    // caso contrario consoleamos
+    console.log(texto)
+    console.log('Se ejecutará una sola vez')
+    // reseteamos el form para que quede mas prolijo
+    form.reset()
+    // y en este caso removemos el listener para completar el punto
+    // al remover el listener hay que considerar que también se remueve el e.preventDefault() por lo cual la pagina se recarga al hacerle click
+    form.removeEventListener('submit', handleSubmit)
+  }
+  form.addEventListener('submit', handleSubmit)
+  // Evento del contenedor <ul>
+  document.getElementById('lista').addEventListener('click', (e) => {
+    console.log('Click en el contenedor UL')
+  })
+
+  // Evento de los elementos <li>
+  document.querySelectorAll('#lista li').forEach((li) => {
+    li.addEventListener('click', (e) => {
+      e.stopPropagation() // con esto evitamos que el evento llegue al <ul>
+      // caso contrario al no estar cuando se haga click en cada <li> se ejecutaría el listener del <ul> por estar también encima de el 
+      console.log(`Click en: ${e.target.textContent}`)
+    })
+  })
+</script>
